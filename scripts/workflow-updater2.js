@@ -9,25 +9,50 @@ const octokit = new Octokit({ auth: process.env.WORKFLOW_GITHUB_TOKEN });
 const org = 'devopselvis'; // Replace with your organization name
 
 async function getWorkflowUrls() {
-    const repos = await octokit.repos.listForOrg({
-        org
-    });
+  let workflowUrls = [];
+  let page = 1;
+  let hasNextPage = true;
 
-    let workflowUrls = [];
+  while (hasNextPage) {
+      const repos = await octokit.repos.listForOrg({
+          org,
+          per_page: 100,
+          page: page
+      });
 
-    for (let repo of repos.data) {
-        const workflows = await octokit.actions.listRepoWorkflows({
-            owner: org,
-            repo: repo.name
-        });
+      for (let repo of repos.data) {
+          let workflowPage = 1;
+          let hasWorkflowNextPage = true;
 
-        for (let workflow of workflows.data.workflows) {
-            const workflowUrl = `https://github.com/${org}/${repo.name}/actions/workflows/${workflow.path}`;
-            workflowUrls.push(workflowUrl);
-        }
-    }
+          while (hasWorkflowNextPage) {
+              const workflows = await octokit.actions.listRepoWorkflows({
+                  owner: org,
+                  repo: repo.name,
+                  per_page: 100,
+                  page: workflowPage
+              });
 
-    return workflowUrls;
+              for (let workflow of workflows.data.workflows) {
+                  const workflowUrl = `https://github.com/${org}/${repo.name}/actions/workflows/${workflow.path}`;
+                  workflowUrls.push(workflowUrl);
+              }
+
+              if (workflows.data.workflows.length < 100) {
+                  hasWorkflowNextPage = false;
+              } else {
+                  workflowPage++;
+              }
+          }
+      }
+
+      if (repos.data.length < 100) {
+          hasNextPage = false;
+      } else {
+          page++;
+      }
+  }
+
+  return workflowUrls;
 }
 
 // let workflowUrls = await getWorkflowUrls();
