@@ -89,7 +89,7 @@ getWorkflowUrls().then(async workflowUrls => {
                   const run = runs.data.workflow_runs[0];
                   const newContent = `URL: ${url}, Date: ${run.created_at}, Status: ${run.status}`;
                   console.log(newContent);
-                  fs.writeFileSync(filePath, newContent, 'utf8');
+                  fs.appendFileSync(filePath, newContent, 'utf8');
               }
           }
       } catch (error) {
