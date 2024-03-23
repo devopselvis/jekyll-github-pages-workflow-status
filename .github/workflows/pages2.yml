@@ -49,6 +49,8 @@ jobs:
           cd scripts/
           npm i
           node workflow-updater2.js
+          echo "---------------- PLEASE WORK -----------------------"
+          cat ${{ github.workspace }}/docs/workflow-status2.md
       # end update of workflow statuses
       # node workflow-updater.js --file=--file../docs/workflow-status.md
 

@@ -6,6 +6,10 @@ const argv = yargs(hideBin(process.argv)).argv;
 
 const octokit = new Octokit({ auth: process.env.WORKFLOW_GITHUB_TOKEN });
 
+const filePath = argv.filePath || '../docs/workflow-status2.md'; // Use the filePath argument or default to '../docs/workflow-status.md'
+const content = fs.readFileSync(filePath, 'utf8');
+let updatedContent = content;
+
 const org = 'devopselvis'; // Replace with your organization name
 
 async function getWorkflowUrls() {
@@ -83,7 +87,9 @@ getWorkflowUrls().then(async workflowUrls => {
 
               if (runs.data.workflow_runs.length > 0) {
                   const run = runs.data.workflow_runs[0];
-                  console.log(`URL: ${url}, Date: ${run.created_at}, Status: ${run.status}`);
+                  const newContent = `URL: ${url}, Date: ${run.created_at}, Status: ${run.status}`;
+                  console.log(newContent);
+                  fs.writeFileSync(filePath, newContent, 'utf8');
               }
           }
       } catch (error) {
