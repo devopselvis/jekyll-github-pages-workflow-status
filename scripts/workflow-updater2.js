@@ -98,7 +98,7 @@ getWorkflowUrls().then(async workflowUrls => {
 
               if (runs.data.workflow_runs.length > 0) {
                   const run = runs.data.workflow_runs[0];
-                  const newContent = `URL: ${url}, Date: ${run.created_at}, Status: ${run.status}<p>`;
+                  const newContent = `\nURL: ${url}, Date: ${run.created_at}, Status: ${run.status}<p>`;
                   console.log(newContent);
                   fs.appendFileSync(filePath, newContent, 'utf8');
               }
