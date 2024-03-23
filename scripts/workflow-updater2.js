@@ -34,9 +34,40 @@ async function getWorkflowUrls() {
 
 let workflowUrls = getWorkflowUrls();
 
-// Output workflow URL to command line
-getWorkflowUrls().then(workflowUrls => {
-  console.log(workflowUrls.join('\n'));
+getWorkflowUrls().then(async workflowUrls => {
+  for (let url of workflowUrls) {
+      const parts = url.split('/');
+      const org = parts[4];
+      const repo = parts[5];
+      const workflow_file = parts[8];
+
+      try {
+          const workflows = await octokit.actions.listRepoWorkflows({
+              owner: org,
+              repo: repo
+          });
+          const workflow = workflows.data.workflows.find(w => w.path === workflow_file);
+
+          if (workflow) {
+              const runs = await octokit.actions.listWorkflowRuns({
+                  owner: org,
+                  repo: repo,
+                  workflow_id: workflow.id,
+                  per_page: 1
+              });
+
+              if (runs.data.workflow_runs.length > 0) {
+                  const run = runs.data.workflow_runs[0];
+                  console.log(`URL: ${url}, Date: ${run.created_at}, Status: ${run.status}`);
+              }
+          }
+      } catch (error) {
+          console.error(error);
+      }
+  }
 }).catch(error => {
   console.error(error);
 });
+
+
+
