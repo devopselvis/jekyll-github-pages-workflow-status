@@ -135,11 +135,11 @@ getWorkflowUrls().then(async workflowUrls => {
                 if (!runs.data.workflow_runs.length) {
                   status = 'no_runs';
                   runName = workflow_file;
-                  runUrl = `https://github.com/${owner}/${repo}/actions/workflows/${workflow_file}`;
+                  runUrl = `https://github.com/${org}/${repo}/actions/workflows/${workflow_file}`;
                 } else {
                   status = run.status === 'completed' ? (run.conclusion === 'success' ? 'success' : run.conclusion) : run.status;
                   runName = run.name;
-                  runUrl = `https://github.com/${owner}/${repo}/actions/runs/${run.id}`;
+                  runUrl = `https://github.com/${org}/${repo}/actions/runs/${run.id}`;
                 }
                 const color = statusColors[status] || 'white';
                 const badge = `[![${runName} - ${status}](https://img.shields.io/static/v1?label=${runName.replace(/ /g, '%20')}&message=${status.replace(/ /g, '%20')}&color=${color})](${runUrl})`;
