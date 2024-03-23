@@ -112,10 +112,44 @@ getWorkflowUrls().then(async workflowUrls => {
                   });
                   const linkText = `\n- [${workflow.name}-${formattedDate}-${run.status}](${url})`;
 
+                  const statusColors = {
+                    'completed': '2ea44f',
+                    'action_required': 'yellow',
+                    'cancelled': 'gray',
+                    'failure': 'red',
+                    'neutral': 'gray',
+                    'skipped': 'gray',
+                    'stale': 'gray',
+                    'success': '2ea44f',
+                    'timed_out': 'red',
+                    'in_progress': 'yellow',
+                    'queued': 'yellow',
+                    'requested': 'yellow',
+                    'waiting': 'blue',
+                    'pending': 'yellow',
+                    'no_runs': 'white'
+                };
+                let status;
+                let runName;
+                let runUrl;
+                if (!response.data.workflow_runs.length) {
+                  status = 'no_runs';
+                  runName = workflow_file;
+                  runUrl = `https://github.com/${owner}/${repo}/actions/workflows/${workflow_file}`;
+                } else {
+                  status = run.status === 'completed' ? (run.conclusion === 'success' ? 'success' : run.conclusion) : run.status;
+                  runName = run.name;
+                  runUrl = `https://github.com/${owner}/${repo}/actions/runs/${run.id}`;
+                }
+                const color = statusColors[status] || 'white';
+                const badge = `[![${runName} - ${status}](https://img.shields.io/static/v1?label=${runName.replace(/ /g, '%20')}&message=${status.replace(/ /g, '%20')}&color=${color})](${runUrl})`;
+                const linkText2 = `\n-${badge}`;
+
                   if (!repoWorkflows[repo]) {
                       repoWorkflows[repo] = [];
                   }
                   repoWorkflows[repo].push(linkText);
+                  repoWorkflows[repo].push(linkText2);
               }
           }
       } catch (error) {
