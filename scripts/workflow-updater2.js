@@ -37,9 +37,9 @@ let workflowUrls = getWorkflowUrls();
 getWorkflowUrls().then(async workflowUrls => {
   for (let url of workflowUrls) {
       const parts = url.split('/');
-      const org = parts[4];
-      const repo = parts[5];
-      const workflow_file = parts[8];
+      const org = parts[3];
+      const repo = parts[4];
+      const workflow_file = parts.slice(7).join('/');
 
       try {
           const workflows = await octokit.actions.listRepoWorkflows({
