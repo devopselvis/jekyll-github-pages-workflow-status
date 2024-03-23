@@ -12,6 +12,17 @@ let updatedContent = content;
 
 const org = 'devopselvis'; // Replace with your organization name
 
+async function getRateLimit() {
+  const rateLimit = await octokit.rateLimit.get();
+  return rateLimit.data.resources.core.remaining;
+}
+
+getRateLimit().then(remaining => {
+  console.log(`Remaining API calls at the start: ${remaining}`);
+}).catch(error => {
+  console.error(error);
+});
+
 async function getWorkflowUrls() {
   let workflowUrls = [];
   let page = 1;
@@ -87,7 +98,7 @@ getWorkflowUrls().then(async workflowUrls => {
 
               if (runs.data.workflow_runs.length > 0) {
                   const run = runs.data.workflow_runs[0];
-                  const newContent = `URL: ${url}, Date: ${run.created_at}, Status: ${run.status}`;
+                  const newContent = `URL: ${url}, Date: ${run.created_at}, Status: ${run.status}<p>`;
                   console.log(newContent);
                   fs.appendFileSync(filePath, newContent, 'utf8');
               }
@@ -98,6 +109,12 @@ getWorkflowUrls().then(async workflowUrls => {
   }
 }).catch(error => {
   console.error(error);
+}).finally(() => {
+  getRateLimit().then(remaining => {
+    console.log(`Remaining API calls at the end: ${remaining}`);
+  }).catch(error => {
+    console.error(error);
+  });
 });
 
 
