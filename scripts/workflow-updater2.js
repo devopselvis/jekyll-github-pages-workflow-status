@@ -30,7 +30,9 @@ async function getWorkflowUrls() {
     return workflowUrls;
 }
 
-let workflowUrls = await getWorkflowUrls();
+// let workflowUrls = await getWorkflowUrls();
+
+let workflowUrls = getWorkflowUrls();
 
 // Output workflow URL to command line
 getWorkflowUrls().then(workflowUrls => {
