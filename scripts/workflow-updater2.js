@@ -75,6 +75,8 @@ async function getWorkflowUrls() {
 let workflowUrls = getWorkflowUrls();
 
 getWorkflowUrls().then(async workflowUrls => {
+  let repoWorkflows = {};
+
   for (let url of workflowUrls) {
       const parts = url.split('/');
       const org = parts[3];
@@ -108,15 +110,23 @@ getWorkflowUrls().then(async workflowUrls => {
                       second: '2-digit',
                       hour12: false
                   });
-                  const linkText = `${workflow.name}-${formattedDate}-${run.status}`;
-                  const newContent = `\n[${linkText}](${url})\n`;
-                  console.log(newContent);
-                  fs.appendFileSync(filePath, newContent, 'utf8');
+                  const linkText = `[${workflow.name}-${formattedDate}-${run.status}](${url})`;
+
+                  if (!repoWorkflows[repo]) {
+                      repoWorkflows[repo] = [];
+                  }
+                  repoWorkflows[repo].push(linkText);
               }
           }
       } catch (error) {
           console.error(error);
       }
+  }
+
+  for (let repo in repoWorkflows) {
+      const newContent = `\n## ${repo}\n\n` + repoWorkflows[repo].join('\n') + '\n';
+      console.log(newContent);
+      fs.appendFileSync(filePath, newContent, 'utf8');
   }
 }).catch(error => {
   console.error(error);
