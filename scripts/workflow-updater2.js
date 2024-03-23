@@ -132,7 +132,7 @@ getWorkflowUrls().then(async workflowUrls => {
                 let status;
                 let runName;
                 let runUrl;
-                if (!response.data.workflow_runs.length) {
+                if (!runs.data.workflow_runs.length) {
                   status = 'no_runs';
                   runName = workflow_file;
                   runUrl = `https://github.com/${owner}/${repo}/actions/workflows/${workflow_file}`;
