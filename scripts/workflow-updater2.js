@@ -98,7 +98,18 @@ getWorkflowUrls().then(async workflowUrls => {
 
               if (runs.data.workflow_runs.length > 0) {
                   const run = runs.data.workflow_runs[0];
-                  const newContent = `\nURL: ${url}, Date: ${run.created_at}, Status: ${run.status}<p>`;
+                  const date = new Date(run.created_at);
+                  const formattedDate = date.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: false
+                  });
+                  const linkText = `${workflow.name}-${formattedDate}-${run.status}`;
+                  const newContent = `\n[${linkText}](${url})\n`;
                   console.log(newContent);
                   fs.appendFileSync(filePath, newContent, 'utf8');
               }
