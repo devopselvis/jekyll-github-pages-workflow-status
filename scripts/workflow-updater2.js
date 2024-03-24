@@ -110,7 +110,7 @@ getWorkflowUrls().then(async workflowUrls => {
                       second: '2-digit',
                       hour12: false
                   });
-                  const linkText = `\n- [${workflow.name}-${formattedDate}-${run.status}](${url})`;
+                  const linkText = `\n- [${workflow.name}-${formattedDate}GMT](${url})`;
 
                   const statusColors = {
                     'completed': '2ea44f',
@@ -143,7 +143,7 @@ getWorkflowUrls().then(async workflowUrls => {
                 }
                 const color = statusColors[status] || 'white';
                 const badge = `[![${runName} - ${status}](https://img.shields.io/static/v1?label=${runName.replace(/ /g, '%20')}&message=${status.replace(/ /g, '%20')}&color=${color})](${runUrl})`;
-                const linkText2 = `\n-${badge}`;
+                const linkText2 = `${badge}`;
 
                   if (!repoWorkflows[repo]) {
                       repoWorkflows[repo] = [];
